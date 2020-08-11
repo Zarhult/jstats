@@ -25,4 +25,5 @@ and enter a URL at the prompt.
 
 # Notes
 
-In building the frequency list, the script ignores morphemes such as particles (§œ, §¨, §Œ) since they fall more in the realm of grammar than vocabulary. Similarly exclamatory sounds such as §¢ are ignored.
+In building the frequency list, the script ignores morphemes such as particles („ÅØ, „Åå, „ÅÆ) since they fall more in the realm of grammar than vocabulary. Similarly exclamatory sounds such as „ÅÇ are ignored.
+
