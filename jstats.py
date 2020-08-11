@@ -11,7 +11,11 @@ fmt = { 'node_format': r'%m\n',
 nm = MeCab(options=fmt)
 
 # Morphemes to ignore in frequency list
-excludes = ['　', '（', '）', '「', '」', '『', '』', '', '', '', '', '', '', '']
+excludes = ['　', '（', '）', '「', '」', '『', '』', '、', '。', '・', 
+            'は', 'が', 'の', 'を', 'て', 'た', 'で', 'と', 'だ', 'も',
+            'な', 'し', 'よ', 'か', 'ん', 'や', '！', '？', 'ぜ', 'に',
+            'さ', 'う', 'ね', 'わ', 'へ', 'ば', 'ぞ', 'せ', 'ら', 'れ', 
+            'え', 'あ', 'ず', 'い', 'お', 'き']
 
 def load_page(URL):
     ''' Returns parsed soup object given a URL. '''
