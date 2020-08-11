@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 from natto import MeCab
 
+# Make MeCab output nothing but morphemes
 fmt = { 'node_format': r'%m\n',
         'bos_format': r'',
         'eos_format': r'',
@@ -12,10 +13,13 @@ nm = MeCab(options=fmt)
 
 # Morphemes to ignore in frequency list
 excludes = ['　', '（', '）', '「', '」', '『', '』', '、', '。', '・', 
-            'は', 'が', 'の', 'を', 'て', 'た', 'で', 'と', 'だ', 'も',
-            'な', 'し', 'よ', 'か', 'ん', 'や', '！', '？', 'ぜ', 'に',
-            'さ', 'う', 'ね', 'わ', 'へ', 'ば', 'ぞ', 'せ', 'ら', 'れ', 
-            'え', 'あ', 'ず', 'い', 'お', 'き']
+            '！', '？', '：', '〜', '”', '“', '〉', '〈', '◆', '゛', 
+            '．', 'ひ', 'じ', 'ど', 'は', 'が', 'の', 'を', 'て', 'た', 
+            'で', 'と', 'だ', 'も', 'な', 'し', 'よ', 'か', 'ん', 'や', 
+            'ぜ', 'に', 'さ', 'う', 'ね', 'わ', 'へ', 'ば', 'ぞ', 'せ', 
+            'ら', 'れ', 'え', 'あ', 'ず', 'い', 'お', 'き', 'ふ', 'り',
+            'み', 'ち', 'る', 'ゆ', 'む', 'ぬ', 'つ', 'す', 'く', 'め',
+            'け', 'ろ', 'ほ', 'そ', 'こ']
 
 def load_page(URL):
     ''' Returns parsed soup object given a URL. '''
@@ -50,9 +54,9 @@ if __name__ == '__main__':
     elif len(sys.argv) == 2:
         URL = str(sys.argv[1])
     else:
-        raise RuntimeError("Invalid commandline arguments")
+        raise RuntimeError('Invalid commandline arguments')
 
     soup = load_page(URL)
-    freq = generate_freq_list(soup)
-    for key in freq:
-        print(key[0], key[1])
+    freq_list = generate_freq_list(soup)
+    for morph in freq_list:
+        print(morph[0], morph[1])
