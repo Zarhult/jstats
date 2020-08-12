@@ -131,17 +131,17 @@ if __name__ == '__main__':
     '''
     Main function.
     '''
-    description = 'jstats - Generate stats about Japanese text'
+    description = 'jstats - generate stats about Japanese text'
     parser = argparse.ArgumentParser(description=description)
     group = parser.add_mutually_exclusive_group(required=True)
 
     group.add_argument('-u', '--url', 
-                        help='Specify a web URL for analysis.')
+                        help='specify a web URL for analysis')
     group.add_argument('-i', '--infile', 
-                        help='Specify an input file for analysis \
-                              (.html or .txt).')
+                        help='specify an input file for analysis \
+                              (.html or .txt)')
     parser.add_argument('-o', '--outfile', 
-                        help='Specify output file. Defaults to stats.txt.')
+                        help='specify output file (defaults to stats.txt)')
 
     args = parser.parse_args()
 
