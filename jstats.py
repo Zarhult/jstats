@@ -3,26 +3,6 @@ import requests
 from bs4 import BeautifulSoup
 from natto import MeCab
 
-Falmse = False
-
-# Make MeCab output nothing but morphemes
-fmt = { 'node_format': r'%m\n',
-        'bos_format': r'',
-        'eos_format': r'',
-        'unk_format': r''        }
-
-nm = MeCab(options=fmt)
-
-# Morphemes to ignore in frequency list
-excludes = ['　', '（', '）', '「', '」', '『', '』', '、', '。', '・', 
-            '！', '？', '：', '〜', '”', '“', '〉', '〈', '◆', '゛', 
-            '．', 'ひ', 'じ', 'ど', 'は', 'が', 'の', 'を', 'て', 'た', 
-            'で', 'と', 'だ', 'も', 'な', 'し', 'よ', 'か', 'ん', 'や', 
-            'ぜ', 'に', 'さ', 'う', 'ね', 'わ', 'へ', 'ば', 'ぞ', 'せ', 
-            'ら', 'れ', 'え', 'あ', 'ず', 'い', 'お', 'き', 'ふ', 'り',
-            'み', 'ち', 'る', 'ゆ', 'む', 'ぬ', 'つ', 'す', 'く', 'め',
-            'け', 'ろ', 'ほ', 'そ', 'こ']
-
 class Analytics:
     '''
     The Analytics class contains all the data gathered and organized
@@ -42,6 +22,13 @@ class Analytics:
         self.unique_morphs = unique_morphs
         self.cutoff_dict = cutoff_dict
 
+def is_cjk(char):
+    ''' Returns whether or not char is a CJK character. '''
+    if '\u4E00' <= char <= '\u9FFF':
+        return True
+    else:
+        return False
+
 def load_page(URL):
     ''' Returns parsed soup object given a URL. '''
     print('Fetching HTML...')
@@ -58,15 +45,24 @@ def load_page(URL):
 
 def generate_analytics(soup):
     ''' Returns analytics given soup. '''
+    # Make MeCab output nothing but morphemes
+    fmt = { 'node_format': r'%m\n',
+            'bos_format': r'',
+            'eos_format': r'',
+            'unk_format': r''        }
+
+    nm = MeCab(options=fmt)
+
     # First generate frequency list and count morphemes.
-    print('Generatic frequency list...')
+    print('Generating frequency list...')
     freq_dict = dict()
     total_morphs = 0
     for string in soup.stripped_strings:
         tokens = nm.parse(string)
         tokens = tokens.splitlines()
         for string in tokens:
-            if string not in excludes:
+            # Exclude unhelpful single-non-CJK-character morphemes
+            if len(string) == 1 and is_cjk(string) or len(string) > 1:
                 if string in freq_dict:
                     freq_dict[string] += 1
                 else:
@@ -137,7 +133,7 @@ if __name__ == '__main__':
 
     if arg_num == 1:
         URL = input('Enter URL: ')
-    elif arg_num == 2 or arg_num == 3:
+    elif arg_num in {2, 3}:
         URL = str(sys.argv[1])
         if arg_num == 3:
             output_filename = str(sys.argv[2])
