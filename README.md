@@ -13,9 +13,19 @@ natto-py requires that the `mecab` (and `mecab-config` on Linux/Mac) executables
 
 # Usage
 
-Simply run the script like any other python script, optionally with arguments to specify the desired URL immediately (skipping the prompt), or a custom output file name. The default output file is jstats.txt.
 ```
-python jstats.py [URL] [FILENAME]
+usage: jstats.py [-h] (-u URL | -i INFILE) [-o OUTFILE]
+
+jstats - generate stats about Japanese text
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u URL, --url URL     specify a web URL for analysis
+  -i INFILE, --infile INFILE
+                        specify an input file for analysis (.html or .txt)
+  -o OUTFILE, --outfile OUTFILE
+                        specify output file (defaults to stats.txt)
+
 ```
 
 # Notes
