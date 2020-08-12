@@ -1,4 +1,6 @@
+import os.path
 import sys
+import argparse
 import requests
 from bs4 import BeautifulSoup
 from natto import MeCab
@@ -16,11 +18,12 @@ class Analytics:
                         to necessary number of (most common) unique 
                         morphemes known
     '''
-    def __init__(self, freq_list, total_morphs, unique_morphs, cutoff_dict):
+    def __init__(self, freq_list, cutoff_dict, total_morphs = 0, 
+                 unique_morphs = 0):
         self.freq_list = freq_list
+        self.cutoff_dict = cutoff_dict
         self.total_morphs = total_morphs
         self.unique_morphs = unique_morphs
-        self.cutoff_dict = cutoff_dict
 
 def is_cjk(char):
     ''' Returns whether or not char is a CJK character. '''
@@ -30,12 +33,16 @@ def is_cjk(char):
         return False
 
 def load_page(URL):
-    ''' Returns parsed soup object given a URL. '''
+    ''' Returns html given a URL. '''
     print('Fetching HTML...')
-    page = requests.get(URL)
+    page = requests.get(URL, timeout=1)
 
-    print('Parsing HTML...')
-    soup = BeautifulSoup(page.content, 'html.parser')
+    return page.content
+
+def get_soup(html):
+    ''' Returns parsed soup object given html. '''
+    print('Parsing html...')
+    soup = BeautifulSoup(html, 'html.parser')
 
     print('Removing furigana...')
     for rt in soup.select('rt'):
@@ -43,8 +50,8 @@ def load_page(URL):
 
     return soup
 
-def generate_analytics(soup):
-    ''' Returns analytics given soup. '''
+def generate_analytics(strings):
+    ''' Returns analytics given list of strings. '''
     # Make MeCab output nothing but morphemes
     fmt = { 'node_format': r'%m\n',
             'bos_format': r'',
@@ -57,7 +64,7 @@ def generate_analytics(soup):
     print('Generating frequency list...')
     freq_dict = dict()
     total_morphs = 0
-    for string in soup.stripped_strings:
+    for string in strings:
         tokens = nm.parse(string)
         tokens = tokens.splitlines()
         for string in tokens:
@@ -86,61 +93,87 @@ def generate_analytics(soup):
     # Finally get number of unique morphemes
     unique_morphs = len(freq_dict)
 
-    return Analytics(freq_list, total_morphs, unique_morphs, cutoff_dict)
+    return Analytics(freq_list, cutoff_dict, total_morphs, unique_morphs)
 
 def output_analytics(analytics, file_name = ''):
     ''' 
     Outputs analytics object to given filename, or to stdout if none given.
+    If the provided analytics object has no morphemes, instead just prints
+    that no morphemes were found.
     '''
-    f = ''
-    if file_name is not '':
-        print('Writing results to ' + file_name + '...')
-        f = open(file_name, 'w')
-
-    for key in analytics.cutoff_dict:
-        output_line = (str(key) + '% comprehension is at unique morpheme ' +
-                       str(analytics.cutoff_dict[key]) + ' of ' + 
-                       str(analytics.unique_morphs))
+    if analytics.total_morphs > 0:
         if file_name is not '':
-            f.write(output_line + '\n')
-        else:
-            print(output_line)
+            print('Writing results to ' + file_name + '...')
+            f = open(file_name, 'w')
 
-    for i, morph in enumerate(analytics.freq_list, start = 1):
-        output_line = (str(i) + ': ' + str(morph[0]) + ' ' + str(morph[1]))
+        for key in analytics.cutoff_dict:
+            output_line = (str(key) + '% comprehension is at unique morpheme ' +
+                           str(analytics.cutoff_dict[key]) + ' of ' + 
+                           str(analytics.unique_morphs))
+            if file_name is not '':
+                f.write(output_line + '\n')
+            else:
+                print(output_line)
+
+        for i, morph in enumerate(analytics.freq_list, start = 1):
+            output_line = (str(i) + ': ' + str(morph[0]) + ' ' + str(morph[1]))
+            if file_name is not '':
+                f.write(output_line + '\n')
+            else:
+                print(output_line)
+        
         if file_name is not '':
-            f.write(output_line + '\n')
-        else:
-            print(output_line)
-    
-    if file_name is not '':
-        f.close()
+            f.close()
+    else:
+        print('No valid Japanese morphemes found.')
 
 if __name__ == '__main__':
     '''
-    Outputs analytics for a webpage to a file. 
-
-    If no commandline arguments given, prompts user for a URL, then writes 
-        results to jstats.txt. 
-    If there is one argument, that argument will be used as the URL and no 
-        prompt will be needed. 
-    If there are two arguments, the second argument will be used as the output 
-        file name rather than the default jstats.txt.
+    Main function.
     '''
-    URL = ''
-    output_filename = 'jstats.txt'
-    arg_num = len(sys.argv)
+    description = 'jstats - Generate stats about Japanese text'
+    parser = argparse.ArgumentParser(description=description)
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    if arg_num == 1:
-        URL = input('Enter URL: ')
-    elif arg_num in {2, 3}:
-        URL = str(sys.argv[1])
-        if arg_num == 3:
-            output_filename = str(sys.argv[2])
+    group.add_argument('-u', '--url', 
+                        help='Specify a web URL for analysis.')
+    group.add_argument('-i', '--infile', 
+                        help='Specify an input file for analysis \
+                              (.html or .txt).')
+    parser.add_argument('-o', '--outfile', 
+                        help='Specify output file. Defaults to stats.txt.')
+
+    args = parser.parse_args()
+
+    if args.outfile:
+        outfile = args.outfile
     else:
-        raise RuntimeError('Too many commandline arguments')
+        outfile = 'stats.txt'
 
-    soup = load_page(URL)
-    analytics = generate_analytics(soup)
-    output_analytics(analytics, output_filename)
+    if args.url:
+        html = load_page(args.url)
+        soup = get_soup(html)
+        analytics = generate_analytics(soup.stripped_strings)
+    elif args.infile:
+        infile_name, infile_extension = os.path.splitext(args.infile)
+        if infile_extension in {'.html', '.htm'}:
+            html = open(args.infile, 'r')
+            soup = get_soup(html)
+            analytics = generate_analytics(soup.stripped_strings)
+        elif infile_extension in {'.txt', ''}:
+            if infile_extension == '':
+                prompt = 'Assume extensionless file is a text file? (y/n): '
+                while (True):
+                    if input(prompt) == 'y':
+                        break
+                    elif input(prompt) == 'n':
+                        print('Quitting.')
+                        sys.exit(1)
+                                        
+            txt = open(args.infile, 'r')
+            analytics = generate_analytics(txt.readlines())
+        else:
+            parser.print_help()
+            sys.exit(1)
 
+    output_analytics(analytics, outfile)
