@@ -1,4 +1,8 @@
-import os.path
+'''
+jstats - generate stats about Japanese text
+'''
+
+import os
 import sys
 import argparse
 import requests
@@ -15,22 +19,23 @@ class Analytics:
         total_morphs: total number of morphemes, including duplicates
         unique_morphs: total number of unique morphemes
         cutoff_dict: a dictionary mapping desired percent comprehension
-                        to necessary number of (most common) unique 
+                        to necessary number of (most common) unique
                         morphemes known
     '''
-    def __init__(self, freq_list, cutoff_dict, total_morphs = 0, 
-                 unique_morphs = 0):
+    def __init__(self, freq_list, cutoff_dict, total_morphs=0,
+                 unique_morphs=0):
         self.freq_list = freq_list
         self.cutoff_dict = cutoff_dict
         self.total_morphs = total_morphs
         self.unique_morphs = unique_morphs
 
+
 def is_cjk(char):
     ''' Returns whether or not char is a CJK character. '''
     if '\u4E00' <= char <= '\u9FFF':
         return True
-    else:
-        return False
+
+    return False
 
 def load_page(URL):
     ''' Returns html given a URL. '''
@@ -131,9 +136,10 @@ if __name__ == '__main__':
     '''
     Main function.
     '''
+    # Set up argparse
     description = 'jstats - generate stats about Japanese text'
     parser = argparse.ArgumentParser(description=description)
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group()
 
     group.add_argument('-u', '--url', 
                         help='specify a web URL for analysis')
@@ -145,6 +151,27 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    # Interactive mode, which simply sets args as if they were passed on CLI
+    if len(sys.argv) <= 1:
+        prompt = 'Analyze a webpage or a file? (w/f): '
+        while (True):
+            i = input(prompt)
+            if i == 'w':
+                args.url = input('Enter URL: ')
+                break
+            elif i == 'f':
+                args.infile = input('Enter file path: ')
+                break
+        prompt = 'Custom output filename? (y/n): '
+        while (True):
+            i = input(prompt)
+            if i == 'y':
+                args.outfile = input('Enter filename: ')
+                break
+            elif i == 'n':
+                break
+
+    # Handle CLI args
     if args.outfile:
         outfile = args.outfile
     else:
@@ -164,12 +191,13 @@ if __name__ == '__main__':
             if infile_extension == '':
                 prompt = 'Assume extensionless file is a text file? (y/n): '
                 while (True):
-                    if input(prompt) == 'y':
+                    i = input(prompt)
+                    if i == 'y':
                         break
-                    elif input(prompt) == 'n':
+                    elif i == 'n':
                         print('Quitting.')
                         sys.exit(1)
-                                        
+
             txt = open(args.infile, 'r')
             analytics = generate_analytics(txt.readlines())
         else:
