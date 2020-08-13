@@ -1,3 +1,6 @@
-__pycache__
+jstats/__pycache__
+build
+dist
+jstats.spec
 todo
 stats.txt
