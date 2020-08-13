@@ -152,7 +152,9 @@ def main():
     parser = get_parser()
     args = parser.parse_args()
 
+    interactive = False
     if len(sys.argv) <= 1:
+        interactive = True
         interactive_set_args(args)
 
     '''
@@ -167,6 +169,9 @@ def main():
         analytics = get_infile_analytics(args)
 
     output_analytics(analytics, args.outfile)
+
+    if interactive:
+        input("Press enter to exit.")
 
 
 if __name__ == '__main__':
