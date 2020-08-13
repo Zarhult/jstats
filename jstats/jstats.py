@@ -95,7 +95,7 @@ def get_infile_analytics(args):
     infile_extension = os.path.splitext(args.infile)[1]
 
     if infile_extension in {'.html', '.htm'}:
-        html = open(args.infile, 'r')
+        html = open(args.infile, 'r', encoding='utf-8')
         soup = analyze.get_soup(html)
         return analyze.generate_analytics(soup.stripped_strings)
 
@@ -107,7 +107,7 @@ def get_infile_analytics(args):
                 print('Quitting.')
                 sys.exit(1)
 
-        txt = open(args.infile, 'r')
+        txt = open(args.infile, 'r', encoding='utf-8')
 
         return analyze.generate_analytics(txt.readlines())
 
@@ -123,7 +123,7 @@ def output_analytics(analytics, file_name=''):
     if analytics.total_morphs > 0:
         if file_name != '':
             print('Writing results to ' + file_name + '...')
-            file = open(file_name, 'w')
+            file = open(file_name, 'w', encoding='utf-8')
 
         for key in analytics.cutoff_dict:
             output_line = (str(key) + '% comprehension is at unique morpheme '
