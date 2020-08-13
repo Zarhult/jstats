@@ -69,7 +69,7 @@ def generate_analytics(strings):
         tokens = tokens.splitlines()
         for string in tokens:
             # Exclude unhelpful single-non-CJK-character morphemes
-            if len(string) == 1 and is_cjk(string) or len(string) > 1:
+            if len(string) > 1 or len(string) == 1 and is_cjk(string):
                 if string in freq_dict:
                     freq_dict[string] += 1
                 else:
