@@ -95,12 +95,7 @@ def get_infile_analytics(args):
     infile_extension = os.path.splitext(args.infile)[1]
 
     if infile_extension in {'.html', '.htm'}:
-        try:
-            html = open(args.infile, 'r')
-        except FileNotFoundError:
-            print('File not found!')
-            sys.exit(1)
-
+        html = open(args.infile, 'r')
         soup = analyze.get_soup(html)
         return analyze.generate_analytics(soup.stripped_strings)
 
@@ -112,11 +107,7 @@ def get_infile_analytics(args):
                 print('Quitting.')
                 sys.exit(1)
 
-        try:
-            txt = open(args.infile, 'r')
-        except FileNotFoundError:
-            print('File not found!')
-            sys.exit(1)
+        txt = open(args.infile, 'r')
 
         return analyze.generate_analytics(txt.readlines())
 
@@ -179,4 +170,14 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    '''
+    Catch and display all top-level exceptions, preventing crashes that
+    make output unreadable.
+    '''
+    try:
+        main()
+    except BaseException:  # pylint: disable=broad-except
+        print(sys.exc_info()[0])
+        import traceback
+        print(traceback.format_exc())
+        input("Press enter to exit.")

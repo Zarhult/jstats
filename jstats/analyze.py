@@ -39,13 +39,9 @@ def is_cjk(char):
 
 def load_page(url):
     '''Returns html given a URL.'''
-    try:
-        print('Fetching HTML...')
-        page = requests.get(url, timeout=1)
-        return page.content
-    except requests.exceptions.RequestException:
-        print('Failed to connect to ' + url)
-        sys.exit(1)
+    print('Fetching HTML...')
+    page = requests.get(url, timeout=1)
+    return page.content
 
 
 def get_soup(html):
