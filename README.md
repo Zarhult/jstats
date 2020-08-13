@@ -4,17 +4,18 @@ jstats is a python script intended to help Japanese learners easily analyze and 
 
 # Dependencies
 
-jstats uses Beautiful Soup 4 for ease of parsing HTML and natto-py for extracting morphemes from Japanese text.  They can be installed with pip:
+jstats uses `requests` for fetching URLs, `beautifulsoup4` for ease of parsing HTML, and `natto-py` for extracting morphemes from Japanese text.  These can be installed with pip:
 ```
+pip install requests
 pip install beautifulsoup4
 pip install natto-py
 ```
-natto-py requires that the `mecab` (and `mecab-config` on Linux/Mac) executables are in your `PATH`. See the [natto-py repo](https://github.com/buruzaemon/natto-py) for more information. Windows users may find it necessary to set the environment variable `MECAB_CHARSET=utf-8`.
+natto-py requires that the `mecab` (and `mecab-config` on Linux/Mac) executables are in your `PATH`. See the [natto-py repo](https://github.com/buruzaemon/natto-py) for more information. Windows users may find it necessary to set the environment variable `MECAB_CHARSET=utf-8` if mecab complains about shift-jis encoding.
 
 # Usage
 For CLI:
 ```
-usage: jstats.py [-h] (-u URL | -i INFILE) [-o OUTFILE]
+usage: jstats.py [-h] [-u URL | -i INFILE] [-o OUTFILE]
 
 jstats - generate stats about Japanese text
 
@@ -25,7 +26,6 @@ optional arguments:
                         specify an input file for analysis (.html or .txt)
   -o OUTFILE, --outfile OUTFILE
                         specify output file (defaults to stats.txt)
-
 ```
 Or just run the script directly for interactive mode.
 
