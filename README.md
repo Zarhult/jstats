@@ -1,6 +1,6 @@
 # jstats
 
-jstats is a python script intended to help Japanese learners easily analyze and gather basic statistics about webpages with Japanese text. Currently, it outputs a text file containing a frequency list and information about how many morphemes must be known to reach a certain level of comprehension.
+jstats is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Currently, it can analyze text files, html files, and webpages.
 
 # Dependencies
 
