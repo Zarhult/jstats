@@ -13,21 +13,9 @@ pip install natto-py
 natto-py requires that the `mecab` (and `mecab-config` on Linux/Mac) executables are in your `PATH`. See the [natto-py repo](https://github.com/buruzaemon/natto-py) for more information. Windows users may find it necessary to set the environment variable `MECAB_CHARSET=utf-8` if mecab complains about shift-jis encoding.
 
 # Usage
-For CLI:
-```
-usage: jstats.py [-h] [-u URL | -i INFILE] [-o OUTFILE]
 
-jstats - generate stats about Japanese text
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -u URL, --url URL     specify a web URL for analysis
-  -i INFILE, --infile INFILE
-                        specify an input file for analysis (.html or .txt)
-  -o OUTFILE, --outfile OUTFILE
-                        specify output file (defaults to stats.txt)
-```
-Or just run the script directly for interactive mode.
+For CLI, see `jstats -h`.
+For interactive mode, simply run the executable directly.
 
 # Notes
 
