@@ -149,6 +149,8 @@ def output_analytics(analytics, file_name=''):
 
 def main():
     '''Main function.'''
+    os.environ['MECAB_CHARSET'] = 'utf-8'
+
     parser = get_parser()
     args = parser.parse_args()
 
