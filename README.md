@@ -1,16 +1,20 @@
 # jstats
 
-jstats is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Currently, it can analyze text files, html files, and webpages. It outputs a frequency list generated from the text as well as some numbers regarding how many morphemes would need to be known to reach a certain level of comprehension.
+`jstats` is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Currently, it can analyze text files, html files, and webpages. It outputs a frequency list generated from the text as well as some numbers regarding how many morphemes would need to be known to reach a certain level of comprehension.
 
-# Dependencies
+# Installation
 
-jstats uses `requests` for fetching URLs, `beautifulsoup4` for ease of parsing HTML, and `natto-py` for extracting morphemes from Japanese text.  These can be installed with pip:
+`jstats`, since it uses `natto-py`, relies on mecab for picking out morphemes from Japanese text. So first, [mecab](https://taku910.github.io/mecab/) must be installed. Be sure to specify utf-8 as the encoding during the installation if asked, or `jstats` may not work. Afterward, things may "just work" after grabbing the latest release and running the executable. But if problems happen with mecab, see the [natto-py repo](https://github.com/buruzaemon/natto-py) for more info on the mecab dependency. If trouble persists, feel free to open an issue, as this project is still new and potentially buggy. Note that there is currently no Mac release, but Mac users can run `jstats.py` directly by installing python and the below dependencies.
+
+# Python Dependencies
+
+`jstats` uses `requests` for fetching URLs, `beautifulsoup4` for ease of parsing HTML, and `natto-py` for extracting morphemes from Japanese text.  These can be installed with pip:
 ```
 pip install requests
 pip install beautifulsoup4
 pip install natto-py
 ```
-natto-py requires that the `mecab` (and `mecab-config` on Linux/Mac) executables are in your `PATH`. See the [natto-py repo](https://github.com/buruzaemon/natto-py) for more information. Windows users may find it necessary to set the environment variable `MECAB_CHARSET=utf-8` if mecab complains about shift-jis encoding.
+This only matters if you want to run `jstats.py` with your own installation of python. As stated above, it is also necessary to install mecab.
 
 # Usage
 
