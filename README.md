@@ -4,7 +4,7 @@
 
 # Installation
 
-`jstats`, since it uses `natto-py`, relies on mecab for picking out morphemes from Japanese text. So first, mecab must be installed. On Windows it can simply be installed from [this webpage](https://taku910.github.io/mecab/). Be sure to specify utf-8 as the encoding during the installation, or `jstats` may not work. Linux users, on the other hand, can likely just install mecab with their package manager. For example, on Ubuntu, `sudo apt install libmecab-dev` will suffice. 
+`jstats`, since it uses `natto-py`, relies on mecab for picking out morphemes from Japanese text. So first, mecab must be installed. On Windows it can simply be installed from [this webpage](https://taku910.github.io/mecab/). Be sure to specify utf-8 as the encoding during the installation, or `jstats` may not work. Linux users, on the other hand, can likely just install mecab with their package manager. For example, on Debian or Ubuntu, `sudo apt install mecab libmecab-dev` will suffice. 
 
 Afterward, things may "just work" after grabbing the latest release and running the executable. But if problems happen with mecab, see the [natto-py repo](https://github.com/buruzaemon/natto-py) for more info on the mecab dependency. If trouble persists, feel free to open an issue, as this project is still new and potentially buggy. Note that there is currently no Mac release, but Mac users can run `jstats.py` directly by installing python and the below dependencies.
 
