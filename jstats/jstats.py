@@ -1,5 +1,11 @@
 '''
 jstats - generate stats about Japanese text
+
+Planned features:
+- Epub file support
+- Option to print to stdout
+- Allow importing user's known morphemes from an input file, rather than
+analyzing file (first from CLI without any permanent storage)
 '''
 
 import os.path
@@ -78,7 +84,7 @@ def interactive_set_args(args):
 
 def get_url_analytics(args):
     '''Return analytics given args specifying a URL.'''
-    # If invalid url, see if appending http:// works; otherwise quit
+    # If invalid url, see if prepending http:// works; otherwise quit
     if not valid_url(args.url):
         args.url = 'http://' + args.url
     if not valid_url(args.url):

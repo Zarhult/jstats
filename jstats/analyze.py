@@ -2,7 +2,6 @@
 Module containing functions for generating analytics.
 '''
 
-import sys
 from collections import namedtuple
 
 import requests
@@ -47,7 +46,8 @@ def load_page(url):
 def get_soup(html):
     '''Returns parsed soup object given html.'''
     print('Parsing html...')
-    soup = BeautifulSoup(html, 'html.parser')
+    # Ignore non UTF-8
+    soup = BeautifulSoup(html.decode('utf-8', 'ignore'), 'html.parser')
 
     print('Removing furigana...')
     for rt_tag in soup.select('rt'):
@@ -71,8 +71,12 @@ def generate_analytics(strings):
     freq_dict = dict()
     total_morphs = 0
     for line in strings:
-        tokens = mecab.parse(line)
-        tokens = tokens.splitlines()
+        # Ignore non-UTF-8 characters
+        try:
+            tokens = mecab.parse(line)
+            tokens = tokens.splitlines()
+        except UnicodeDecodeError:
+            pass
         for string in tokens:
             # Exclude unhelpful single-non-CJK-character morphemes
             if len(string) > 1 or len(string) == 1 and is_cjk(string):
