@@ -49,7 +49,7 @@ def is_cjk(char):
 def load_page(url):
     '''Returns html given a URL.'''
     print('Fetching HTML...')
-    page = requests.get(url, timeout=1)
+    page = requests.get(url, timeout=5)
     return page.content
 
 

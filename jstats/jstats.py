@@ -4,9 +4,8 @@ jstats - generate stats about Japanese text
 Planned features:
 - Epub file support
 - Option to print to stdout
-- Allow importing user's known morphemes from an input file, rather than
-analyzing file (first from CLI without any permanent storage)
 - Replace y/n prompts with "empty for none"
+- Store user knowledge permanently
 '''
 
 import os.path
@@ -217,7 +216,7 @@ def main():
 if __name__ == '__main__':
     '''
     Catch and display all top-level exceptions, preventing crashes that
-    make output unreadable on Windows interactive mode.
+    make output unreadable in interactive mode on Windows.
     '''
     try:
         main()
