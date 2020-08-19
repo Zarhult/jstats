@@ -1,4 +1,6 @@
-jstats/__pycache__
+jstats/__pycache__/
+jstats/test_files/
+jstats/my-knowledge.txt
 build
 dist
 jstats.spec
