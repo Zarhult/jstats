@@ -1,6 +1,12 @@
 # jstats
 
-`jstats` is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Currently, it can analyze text files, html files, and webpages. It outputs a frequency list generated from the text as well as some numbers regarding how many morphemes would need to be known to reach a certain level of comprehension.
+`jstats` is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Features include:
+* Works on websites, html files, and text files
+* Generates frequency lists (of unknown morphemes only, if desired)
+* Determines how many of the most frequent morphemes must be known for a certain level of comprehension
+* Import text file containing known morphemes, to personalize results
+
+For instance, suppose you are an intermediate learner and you want to read a Japanese novel you found on a webpage. Assuming you use Anki, you could export your deck as a .txt file, then feed that and the URL to `jstats`. The result would be a text file telling you what your current percent comprehension is, what the most common unknown morphemes are, and how many of them you need to learn to reach, say, 90% comprehension. This will give you an idea of how hard the novel will be for you, and a list of the most important words to learn to quickly bring up your comprehension of the desired novel.
 
 # Installation
 
