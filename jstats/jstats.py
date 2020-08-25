@@ -3,8 +3,6 @@ jstats - generate stats about Japanese text
 
 Planned features:
 - Epub file support
-- Option to print to stdout
-- Replace y/n prompts with "empty for none"
 - Store user knowledge permanently
 '''
 
@@ -16,14 +14,30 @@ from urllib.parse import urlparse
 import analyze
 
 
-def options_prompt(text, valid_inputs):
-    '''Prompt user for input and return it.
+def options_prompt(text, valid_inputs, blank_default=''):
+    '''Prompt user for input, giving options, and return it.
     Prompt will repeat until input is one of valid_inputs.
+    Blank input will be treated as blank_default if provided.
     '''
+    first = True
+    for option in valid_inputs:
+        if first:
+            prompt_inputs = valid_inputs[0]
+            first = False
+        else:
+            prompt_inputs += '/' + option
+
+    prompt = text + ' (' + prompt_inputs
+    if blank_default != '':
+        prompt += ', default ' + blank_default
+    prompt += '): '
+
     while True:
-        i = input(text)
+        i = input(prompt)
         if i in valid_inputs:
             break
+        if i == '' and blank_default != '':
+            return blank_default
 
     return i
 
@@ -55,16 +69,17 @@ def get_parser():
     '''Setup argparse.'''
     description = 'jstats - generate stats about Japanese text'
     parser = argparse.ArgumentParser(description=description)
-    group = parser.add_mutually_exclusive_group()
+    group_input = parser.add_mutually_exclusive_group()
 
-    group.add_argument('-u', '--url',
-                       help='specify a web URL for analysis')
-    group.add_argument('-i', '--infile',
-                       help=('specify an input file for analysis'
-                             ' (.html or .txt)'))
+    group_input.add_argument('-u', '--url',
+                             help='specify a web URL for analysis')
+    group_input.add_argument('-i', '--infile',
+                             help=('specify an input file for analysis'
+                                   ' (.html or .txt)'))
     parser.add_argument('-o', '--outfile',
-                        help='specify output file (defaults to stats.txt)',
-                        default='stats.txt')
+                        help=('specify output file'
+                              ' (stats.txt if no argument given)'),
+                        nargs='?', const='stats.txt')
     parser.add_argument('-k', '--knowfile',
                         help=('specify an input file containing'
                               ' morphemes you know (.html or .txt)'))
@@ -74,19 +89,21 @@ def get_parser():
 
 def interactive_set_args(args):
     '''Sets args interactively, as if they were specified on CLI.'''
-    i = options_prompt('Custom output filename? (y/n): ', ['y', 'n'])
-    if i == 'y':
-        args.outfile = noblank_prompt('Enter filename: ')
-
-    i = options_prompt('Analyze a webpage or a file? (w/f): ', ['w', 'f'])
+    i = options_prompt('Analyze a webpage or a file?', ['w', 'f'], 'w')
     if i == 'w':
         args.url = noblank_prompt('Enter URL: ')
     elif i == 'f':
         args.infile = noblank_prompt('Enter filename: ')
 
-    i = options_prompt('Input a knowledge file? (y/n): ', ['y', 'n'])
+    i = options_prompt('Input a knowledge file?', ['y', 'n'], 'n')
     if i == 'y':
         args.knowfile = noblank_prompt('Enter filename: ')
+
+    i = options_prompt('Output to file?', ['y', 'n'], 'n')
+    if i == 'y':
+        args.outfile = input('Enter filename (blank for stats.txt): ')
+        if not args.outfile:
+            args.outfile = 'stats.txt'
 
 
 def get_url_analytics(args):
@@ -115,8 +132,8 @@ def get_infile_analytics(args):
 
     if infile_extension in {'.txt', ''}:
         if infile_extension == '':
-            i = options_prompt(('Given filename has no extension. '
-                                + 'Proceed anyways? (y/n): '), ['y', 'n'])
+            prompt = 'Given input filename has no extension. Treat as .txt?'
+            i = options_prompt(prompt, ['y', 'n'], 'y')
             if i == 'n':
                 print('Quitting.')
                 sys.exit(1)
@@ -207,7 +224,10 @@ def main():
     else:
         raise Exception('No arguments set for analysis')
 
-    output_analytics(analytics, args.outfile)
+    if args.outfile:
+        output_analytics(analytics, args.outfile)
+    else:
+        output_analytics(analytics)
 
     if interactive:
         input("Press enter to exit.")
