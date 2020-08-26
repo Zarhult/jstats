@@ -13,6 +13,9 @@ from urllib.parse import urlparse
 
 import analyze
 
+import ebooklib
+from ebooklib import epub
+
 
 def options_prompt(text, valid_inputs, blank_default=''):
     '''Prompt user for input, giving options, and return it.
@@ -75,14 +78,14 @@ def get_parser():
                              help='specify a web URL for analysis')
     group_input.add_argument('-i', '--infile',
                              help=('specify an input file for analysis'
-                                   ' (.html or .txt)'))
+                                   ' (.html, .epub, .txt)'))
     parser.add_argument('-o', '--outfile',
                         help=('specify output file'
                               ' (stats.txt if no argument given)'),
                         nargs='?', const='stats.txt')
     parser.add_argument('-k', '--knowfile',
                         help=('specify an input file containing'
-                              ' morphemes you know (.html or .txt)'))
+                              ' morphemes you know (.html, .epub, .txt)'))
 
     return parser
 
@@ -121,12 +124,43 @@ def get_url_analytics(args):
     return analyze.generate_analytics(soup.stripped_strings, args.knowfile)
 
 
+def epub_to_html(epub_file):
+    '''Converts epub to a single html file whose body contains the entire text
+    of the novel. Returns the result.'''
+    # First get individual soups of each html file
+    html_files = []
+    book = epub.read_epub(epub_file)
+    for item in book.get_items():
+        if item.get_type() == ebooklib.ITEM_DOCUMENT:
+            html_files += [analyze.get_soup(item.get_content())]
+
+    # Then append the bodies of each file to the first file, capturing all
+    # the text we care about in one file
+    if len(html_files) == 0:
+        raise Exception('Failed to find html in epub')
+    else:
+        html = html_files[0]
+        first = True
+        for f in html_files:
+            if first:
+                first = False
+            else:
+                for element in f.body:
+                    html.body.append(element)
+
+    return html
+
+
 def get_infile_analytics(args):
     '''Returns analytics given args specifying an infile.'''
     infile_extension = os.path.splitext(args.infile)[1]
 
-    if infile_extension in {'.html', '.htm'}:
-        html = open(args.infile, 'r', encoding='utf-8')
+    if infile_extension in {'.html', '.htm', '.epub'}:
+        if infile_extension == '.epub':
+            html = epub_to_html(args.infile)
+        else:
+            html = open(args.infile, 'r', encoding='utf-8')
+
         soup = analyze.get_soup(html)
         return analyze.generate_analytics(soup.stripped_strings, args.knowfile)
 
@@ -230,7 +264,7 @@ def main():
         output_analytics(analytics)
 
     if interactive:
-        input("Press enter to exit.")
+        input('Press enter to exit.')
 
 
 if __name__ == '__main__':
@@ -246,4 +280,4 @@ if __name__ == '__main__':
         print(sys.exc_info()[0])
         import traceback
         print(traceback.format_exc())
-        input("Press enter to exit.")
+        input('Press enter to exit.')
