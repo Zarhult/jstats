@@ -1,12 +1,12 @@
 # jstats
 
 `jstats` is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Features include:
-* Works on websites, html files, and text files
-* Generates frequency lists (of unknown morphemes only, if desired)
+* Works on websites, ebooks (.epub), html files, and text files
+* Generates frequency lists (only of morphemes unknown to the user, if desired)
 * Determines how many of the most frequent morphemes must be known for a certain level of comprehension
 * Import text file containing known morphemes, to personalize results
 
-For instance, suppose you are an intermediate learner and you want to read a Japanese novel you found on a webpage. Assuming you use Anki, you could export your deck as a .txt file, then feed that and the URL to `jstats`. The result would be a text file telling you what your current percent comprehension is, what the most common unknown morphemes are, and how many of them you need to learn to reach, say, 90% comprehension. This will give you an idea of how hard the novel will be for you, and a list of the most important words to learn to quickly bring up your comprehension of the desired novel.
+For instance, suppose you are an intermediate learner and you want to read a Japanese ebook. Assuming you use Anki, you could export your deck as a .txt file, then feed that and the epub file to `jstats`. The result would be a text file telling you what your current percent comprehension is, what the most common unknown morphemes are, and how many of them you need to learn to reach, say, 90% comprehension. This will give you an idea of how hard the book will be for you, and a list of the most important words/morphemes to learn to quickly bring up your comprehension of the ebook you're interested in.
 
 # Installation
 
@@ -18,11 +18,12 @@ Currently, the Linux release must be run from an existing terminal, i.e. `./jsta
 
 # Python Dependencies
 
-`jstats` uses `requests` for fetching URLs, `beautifulsoup4` for ease of parsing HTML, and `natto-py` for extracting morphemes from Japanese text.  These can be installed with pip:
+`jstats` uses `requests` for fetching URLs, `beautifulsoup4` for ease of parsing HTML, `natto-py` for extracting morphemes from Japanese text, and `ebooklib` for working with ebook files.  These can be installed with pip:
 ```
 pip install requests
 pip install beautifulsoup4
 pip install natto-py
+pip install ebooklib
 ```
 This only matters if you want to run `jstats.py` with your own installation of python. As stated above, it is also necessary to install mecab.
 

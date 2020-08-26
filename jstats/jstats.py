@@ -2,7 +2,6 @@
 jstats - generate stats about Japanese text
 
 Planned features:
-- Epub file support
 - Store user knowledge permanently
 '''
 
