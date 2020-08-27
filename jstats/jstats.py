@@ -10,11 +10,10 @@ import sys
 import argparse
 from urllib.parse import urlparse
 
-import analyze
-
 import ebooklib
 from ebooklib import epub
 
+import analyze
 
 def options_prompt(text, valid_inputs, blank_default=''):
     '''Prompt user for input, giving options, and return it.
@@ -137,16 +136,15 @@ def epub_to_html(epub_file):
     # the text we care about in one file
     if len(html_files) == 0:
         raise Exception('Failed to find html in epub')
-    else:
-        html = html_files[0]
-        first = True
-        for f in html_files:
-            if first:
-                first = False
-            else:
-                for element in f.body:
-                    html.body.append(element)
 
+    html = html_files[0]
+    first = True
+    for file in html_files:
+        if first:
+            first = False
+        else:
+            for element in file.body:
+                html.body.append(element)
     return html
 
 
@@ -184,52 +182,67 @@ def output_analytics(analytics, file_name=''):
     If the provided analytics object has no morphemes, instead just prints
     that no morphemes were found.
     '''
-    # ! TODO: optimize by moving the if statements outside of the for loops
-    if analytics.total_morphs > 0:
-        using_output_file = file_name != ''
-        if using_output_file:
-            print('Writing results to ' + file_name + '...')
-            f = open(file_name, 'w', encoding='utf-8')
-
-        comprehension = analytics.total_known_morphs / analytics.total_morphs
-        # 0 comprehension means user hasn't input a knowledge file
-        if comprehension != 0:
-            comprehension_str = str(round(comprehension * 100))
-            output_line1 = ('Your current comprehension is '
-                            + comprehension_str + '%.')
-            output_line2 = ('(You know ' + str(analytics.total_known_morphs)
-                            + ' of ' + str(analytics.total_morphs)
-                            + ' morphemes.)')
-
-            if using_output_file:
-                f.write(output_line1 + '\n')
-                f.write(output_line2 + '\n')
-            else:
-                print(output_line1)
-                print(output_line2)
-
-        for key in analytics.cutoff_dict:
-            output_line = (str(key)
-                           + ('% comprehension is gained after unknown unique '
-                           'morpheme ')
-                           + str(analytics.cutoff_dict[key]) + ' of '
-                           + str(analytics.unique_unknown_morphs))
-            if using_output_file:
-                f.write(output_line + '\n')
-            else:
-                print(output_line)
-
-        for i, morph in enumerate(analytics.freq_list, start=1):
-            output_line = (str(i) + ': ' + str(morph[0]) + ' ' + str(morph[1]))
-            if using_output_file:
-                f.write(output_line + '\n')
-            else:
-                print(output_line)
-
-        if using_output_file:
-            f.close()
-    else:
+    if analytics.total_morphs <= 0:
         print('No valid Japanese morphemes found.')
+        return
+
+    using_output_file = file_name != ''
+    if using_output_file:
+        print('Writing results to ' + file_name + '...')
+        file = open(file_name, 'w', encoding='utf-8')
+
+    comprehension = analytics.total_known_morphs / analytics.total_morphs
+    # 0 comprehension means user hasn't input a knowledge file
+    if comprehension != 0:
+        comprehension_str = str(round(comprehension * 100))
+        output_line1 = ('Your current comprehension is '
+                        + comprehension_str + '%.')
+        output_line2 = ('(You know ' + str(analytics.total_known_morphs)
+                        + ' of ' + str(analytics.total_morphs)
+                        + ' morphemes.)')
+
+        if using_output_file:
+            file.write(output_line1 + '\n')
+            file.write(output_line2 + '\n')
+        else:
+            print(output_line1)
+            print(output_line2)
+
+    for key in analytics.cutoff_dict:
+        output_line = (str(key)
+                       + ('% comprehension is gained after unknown unique '
+                          'morpheme ')
+                       + str(analytics.cutoff_dict[key]) + ' of '
+                       + str(analytics.unique_unknown_morphs))
+        if using_output_file:
+            file.write(output_line + '\n')
+        else:
+            print(output_line)
+
+    for i, morph in enumerate(analytics.freq_list, start=1):
+        output_line = (str(i) + ': ' + str(morph[0]) + ' ' + str(morph[1]))
+        if using_output_file:
+            file.write(output_line + '\n')
+        else:
+            print(output_line)
+
+    if using_output_file:
+        file.close()
+
+
+def handle_args(args):
+    '''Takes set args and generates and outputs analytics from them.'''
+    if args.url:
+        analytics = get_url_analytics(args)
+    elif args.infile:
+        analytics = get_infile_analytics(args)
+    else:
+        raise Exception('No arguments set for analysis')
+
+    if args.outfile:
+        output_analytics(analytics, args.outfile)
+    else:
+        output_analytics(analytics)
 
 
 def main():
@@ -244,33 +257,15 @@ def main():
         interactive = True
         interactive_set_args(args)
 
-    '''
-    Args have now been set up either interactively or by CLI.
-    All input validation should happen AFTER this point, for
-    equal results between CLI and interactive mode.
-    '''
-
-    if args.url:
-        analytics = get_url_analytics(args)
-    elif args.infile:
-        analytics = get_infile_analytics(args)
-    else:
-        raise Exception('No arguments set for analysis')
-
-    if args.outfile:
-        output_analytics(analytics, args.outfile)
-    else:
-        output_analytics(analytics)
+    handle_args(args)
 
     if interactive:
         input('Press enter to exit.')
 
 
 if __name__ == '__main__':
-    '''
-    Catch and display all top-level exceptions, preventing crashes that
-    make output unreadable in interactive mode on Windows.
-    '''
+    # Prevent crashes that make output unreadable on Windows by catching
+    # and displaying all top-level exceptions, then prompting for exit
     try:
         main()
     except SystemExit:  # Don't print exit info when user runs -h
