@@ -1,8 +1,5 @@
 '''
 jstats - generate stats about Japanese text
-
-Planned features:
-- Store user knowledge permanently
 '''
 
 import os.path
@@ -96,7 +93,7 @@ def interactive_set_args(args):
     elif i == 'f':
         args.infile = noblank_prompt('Enter filename: ')
 
-    i = options_prompt('Input a knowledge file?', ['y', 'n'], 'n')
+    i = options_prompt('Import a file of known text?', ['y', 'n'], 'n')
     if i == 'y':
         args.knowfile = noblank_prompt('Enter filename: ')
 
@@ -145,6 +142,7 @@ def epub_to_html(epub_file):
         else:
             for element in file.body:
                 html.body.append(element)
+
     return html
 
 
