@@ -8,6 +8,31 @@
 
 For instance, suppose you are an intermediate learner and you want to read a Japanese ebook. Assuming you use Anki, you could export your deck as a .txt file, then feed that and the epub file to `jstats`. The result would be a text file telling you what your current percent comprehension is, what the most common unknown morphemes are, and how many of them you need to learn to reach, say, 90% comprehension. This will give you an idea of how hard the book will be for you, and a list of the most important words/morphemes to learn to quickly bring up your comprehension of the ebook you're interested in.
 
+## Example light novel output (shortened)
+```
+Your current comprehension is 82%.
+(You know 17541 of 21493 morphemes.)
+80% comprehension is gained after unknown unique morpheme 0 of 1972
+85% comprehension is gained after unknown unique morpheme 30 of 1972
+90% comprehension is gained after unknown unique morpheme 259 of 1972
+95% comprehension is gained after unknown unique morpheme 898 of 1972
+98% comprehension is gained after unknown unique morpheme 1543 of 1972
+99% comprehension is gained after unknown unique morpheme 1758 of 1972
+1: 白羽 254
+2: 店員 56
+3: 菅原 43
+4: 喋り 24
+5: ドア 23
+6: 夜勤 20
+7: いらっしゃい 19
+8: 働いて 19
+9: ようだった 18
+10: のだった 18
+11: 縄文 18
+12: 旦那 17
+...
+```
+
 # Installation
 
 `jstats`, since it uses `natto-py`, relies on mecab for picking out morphemes from Japanese text. So first, mecab must be installed. On Windows it can simply be installed from [this webpage](https://taku910.github.io/mecab/). Be sure to specify utf-8 as the encoding during the installation, or `jstats` may not work. Linux users, on the other hand, can likely just install mecab with their package manager. For example, on Debian or Ubuntu, `sudo apt install mecab libmecab-dev` will suffice. 
