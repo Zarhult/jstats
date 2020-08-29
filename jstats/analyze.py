@@ -42,17 +42,20 @@ class Analytics:
         self.unique_unknown_morphs = 0
 
         for string in input_morphemes:
-            not_known = string not in known_morphemes
+            known = string in known_morphemes
             valid = len(string) > 1 or len(string) == 1 and is_cjk(string)
             if valid:
                 self.total_morphs += 1
-                if not_known:
+                if not known:
                     if string in freq_dict:
                         freq_dict[string] += 1
                     else:
                         freq_dict[string] = 1
                 else:
                     self.total_known_morphs += 1
+
+        if self.total_morphs == 0:
+            raise Exception('No Japanese morphemes found.')
 
         self.unique_unknown_morphs = len(freq_dict)
         self.freq_list = sorted(freq_dict.items(), key=lambda x: x[1],
@@ -154,15 +157,17 @@ def make_knowledge_file(known_morphemes, knowledge_file):
 
 
 def get_known_morphemes(knowfile=''):
-    '''Returns user's known unique morphemes. First tries to read them from
-    an existing file called "knowledge". If it does not exist, and a knowfile
-    argument is provided, creates "knowledge" from that file's contents before
-    returning them. Otherwise return empty list (no knowledge).'''
+    '''Returns user's known morphemes. First tries to read them from
+    an existing file called "knowledge". If not found, and a knowfile
+    argument is provided, creates the file from the knowfile's contents
+    before returning them. Otherwise return empty list (no knowledge).
+    '''
+    # !TODO: file extension depends on environment, can't always find file
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    knowledge_file = script_dir + '/knowledge'
+    knowledge_file = os.path.join(script_dir, 'knowledge')
     if os.path.isfile(knowledge_file):
         print('Found and using "knowledge" file.')
-        data = shelve.open(knowledge_file)
+        data = shelve.open(knowledge_file, flag='r')
         known_morphemes = data['k']
         data.close()
     elif knowfile:
@@ -178,9 +183,6 @@ def get_known_morphemes(knowfile=''):
 def generate_analytics(strings, knowfile=''):
     '''Returns analytics given list of strings to analyze and optionally the
     path to a file containing known morphemes to factor in to the analysis.
-    Known morphemes will be left out of the frequency list, and used to tell
-    the user their current comprehension and how many unknown morphemes must
-    be learned to reach the comprehension cutoffs.
     '''
     input_morphemes = get_morpheme_list(strings)
     known_morphemes = get_known_morphemes(knowfile)

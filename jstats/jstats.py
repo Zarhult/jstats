@@ -120,7 +120,7 @@ def get_url_analytics(args):
 
 
 def epub_to_html(epub_file):
-    '''Converts epub to a single html file whose body contains the entire text
+    '''Converts epub to a single html file containing the entire text
     of the novel. Returns the result.'''
     # First get individual soups of each html file
     html_files = []
@@ -129,8 +129,8 @@ def epub_to_html(epub_file):
         if item.get_type() == ebooklib.ITEM_DOCUMENT:
             html_files += [analyze.get_soup(item.get_content())]
 
-    # Then append the bodies of each file to the first file, capturing all
-    # the text we care about in one file
+    # Then append all the elements of each file to the first file
+    # and return it
     if len(html_files) == 0:
         raise Exception('Failed to find html in epub')
 
@@ -140,14 +140,15 @@ def epub_to_html(epub_file):
         if first:
             first = False
         else:
-            for element in file.body:
-                html.body.append(element)
+            for element in file:
+                html.append(element)
 
     return html
 
 
 def get_infile_analytics(args):
     '''Returns analytics given args specifying an infile.'''
+    print('Analyzing ' + args.infile + ' ...')
     infile_extension = os.path.splitext(args.infile)[1]
 
     if infile_extension in {'.html', '.htm', '.epub'}:
