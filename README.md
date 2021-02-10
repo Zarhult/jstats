@@ -1,6 +1,6 @@
 # jstats
 
-`jstats` is a python script intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Features include:
+`jstats` is a python program intended to help Japanese learners easily analyze and gather basic statistics about Japanese text. Features include:
 * Works on websites, ebooks (.epub), html files, and text files
 * Generates frequency lists (only of morphemes unknown to the user, if desired)
 * Determines how many of the most frequent morphemes must be known for a certain level of comprehension
@@ -32,6 +32,7 @@ Your current comprehension is 82%.
 12: 旦那 17
 ...
 ```
+In the above example, the most common word the user does not know is 白羽 (a name), which occurs 254 times. Second is 店員, which occurs 56 times. If the user wanted to reach 90% comprehension before reading the book, they would need to learn the top 259 words/morphemes in the example.
 
 # Installation
 
@@ -59,4 +60,4 @@ For interactive mode, simply run the executable directly.
 
 # Notes
 
-The script ignores morphemes such as particles (は, が, よ, etc) or exclamatory sounds (あ, う) in order to focus on vocabulary. However, morphemes such as 〜られる will be listed, even though they are not quite words.
+The program ignores morphemes such as particles (は, が, よ, etc) or exclamatory sounds (あ, う) in order to focus on vocabulary. However, morphemes such as 〜られる will be listed, even though they are not quite words.
