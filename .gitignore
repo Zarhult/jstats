@@ -1,6 +1,8 @@
 jstats/__pycache__/
 jstats/test_files/
 jstats/my-knowledge.txt
+jstats/knowledge
+jstats/test.epub
 build
 dist
 jstats.spec
