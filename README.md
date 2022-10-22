@@ -8,7 +8,7 @@
 
 For instance, suppose you are an intermediate learner and you want to read a Japanese ebook. Assuming you use Anki, you could export your deck as a .txt file, then feed that and the epub file to `jstats`. The result would be a text file telling you what your current percent comprehension is, what the most common unknown morphemes are, and how many of them you need to learn to reach, say, 90% comprehension. This will give you an idea of how hard the book will be for you, and a list of the most important words/morphemes to learn to quickly bring up your comprehension of the ebook you're interested in.
 
-## Example light novel output (shortened)
+## Example output from コンビニ人間 (shortened)
 ```
 Your current comprehension is 82%.
 (You know 17541 of 21493 morphemes.)
@@ -32,7 +32,7 @@ Your current comprehension is 82%.
 12: 旦那 17
 ...
 ```
-In the above example, the most common word the user does not know is 白羽 (a name), which occurs 254 times. Second is 店員, which occurs 56 times. If the user wanted to reach 90% comprehension before reading the book, they would need to learn the top 259 words/morphemes in the example.
+In the above example, the most common word the user does not know is 白羽 (a name), which occurs 254 times. Second is 店員, which occurs 56 times. If the user wanted to reach 90% comprehension before reading the book, they would need to learn the top 259 words/morphemes in the example. Be warned that although 90% might sound good, it actually means you are missing every 10th word on average.
 
 # Installation
 
@@ -57,6 +57,8 @@ This only matters if you want to run `jstats.py` with your own installation of p
 
 For CLI, see `jstats -h`.
 For interactive mode, simply run the executable directly.
+
+Note that if you use monolingual definitions in your Anki collection, exporting your deck as a .txt and giving that to jstats will cause jstats to assume you know every single word in your monolingual definitions, which you probably don't. There is an easy solution to this. First, create a new empty deck in Anki. Then, export your Japanese deck as a .txt, and then import that .txt back into Anki. In the prompt you can specify that you want to import it into the new deck you just created, and have it ignore the monolingual definition field. As a result you will have a duplicate of your Japanese deck with all the definitions removed. Finally you can just export that deck as a .txt and give it to jstats. You can also go ahead and delete the duplicate deck after you successfuly export it as a .txt.
 
 # Notes
 
